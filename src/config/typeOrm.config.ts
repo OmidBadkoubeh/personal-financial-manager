@@ -13,7 +13,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.TYPEORM_PASSWORD || dbConfig.password,
   database: process.env.TYPEORM_DATABASE || dbConfig.database,
   synchronize: !!process.env.TYPEORM_SYNC || dbConfig.synchronize,
-  // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   autoLoadEntities:
     !!process.env.TYPEORM_AUTOLOAD_ENTITIES || dbConfig.autoLoadEntities,
 };
