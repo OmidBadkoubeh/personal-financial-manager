@@ -12,6 +12,8 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: process.env.TYPEORM_USERNAME || dbConfig.username,
   password: process.env.TYPEORM_PASSWORD || dbConfig.password,
   database: process.env.TYPEORM_DATABASE || dbConfig.database,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: !!process.env.TYPEORM_SYNC || dbConfig.synchronize,
+  // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  autoLoadEntities:
+    !!process.env.TYPEORM_AUTOLOAD_ENTITIES || dbConfig.autoLoadEntities,
 };

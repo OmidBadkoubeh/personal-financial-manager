@@ -10,6 +10,7 @@ export type DbConfig = {
   username: string;
   password: string;
   synchronize: boolean;
+  autoLoadEntities: boolean;
 };
 
 export type JwtConfig = {
