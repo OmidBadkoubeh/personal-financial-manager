@@ -1,6 +1,7 @@
 import {
-  IsDate,
+  IsDateString,
   IsEmail,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   Matches,
@@ -22,18 +23,23 @@ export class CreateUserDto {
   @Matches(PasswordRegEx, { message: 'Password is too weak!' })
   password: string;
 
+  @IsOptional()
   @IsString()
   firstName?: string;
 
+  @IsOptional()
   @IsString()
   lastName?: string;
 
-  @IsPhoneNumber()
+  @IsOptional()
+  @IsPhoneNumber('IR')
   phone?: string;
 
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
-  @IsDate()
-  birthDate?: Date;
+  @IsOptional()
+  @IsDateString({ strict: false })
+  birthDate?: string;
 }
