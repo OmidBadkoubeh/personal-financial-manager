@@ -14,18 +14,18 @@ export class User extends BaseEntity {
   @Column()
   salt: string;
 
-  @Column()
-  firstName: string;
+  @Column({ nullable: true })
+  firstName?: string;
 
-  @Column()
-  lastName: string;
+  @Column({ nullable: true })
+  lastName?: string;
 
-  @Column()
-  phone: string;
+  @Column({ nullable: true })
+  phone?: string;
 
-  @Column()
-  email: string;
+  @Column({ nullable: true })
+  email?: string;
 
-  @Column()
-  birthDate: Date;
+  @Column({ nullable: true })
+  birthDate?: string;
 }
