@@ -25,11 +25,19 @@ export class UserService {
     return this.userRepository.findUser(id);
   }
 
+  async getUserByUsername(username: string): Promise<User> {
+    return this.userRepository.findOne({ username });
+  }
+
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     return this.userRepository.updateUser(id, updateUserDto);
   }
 
   async removeUser(id: number): Promise<void> {
     this.userRepository.removeUser(id);
+  }
+
+  async validateUser(username: string, password: string): Promise<string> {
+    return this.userRepository.validateUser(username, password);
   }
 }

@@ -1,7 +1,9 @@
 import {
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { EntityRepository, Repository } from 'typeorm';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,18 +16,18 @@ export class UserRepository extends Repository<User> {
     const user = new User();
     try {
       user.username = createUserDto.username;
-      user.password = createUserDto.password; // TODO: fix this
       user.email = createUserDto.email;
       user.firstName = createUserDto.firstName;
       user.lastName = createUserDto.lastName;
       user.phone = createUserDto.phone;
       user.birthDate = createUserDto.birthDate;
-      user.salt = 'superSecret51'; // TODO: fix this
-    } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        `Something wrong in creating user`,
+      user.salt = await bcrypt.genSalt();
+      user.password = await this.hashPassword(
+        createUserDto.password,
+        user.salt,
       );
+    } catch (error) {
+      throw new InternalServerErrorException(`Something wrong in createUser`);
     }
     return this.save(user);
   }
@@ -46,13 +48,17 @@ export class UserRepository extends Repository<User> {
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const found = await this.findUser(id);
+
     found.username = updateUserDto.username;
-    found.password = updateUserDto.password; // TODO: fix this
     found.email = updateUserDto.email;
     found.firstName = updateUserDto.firstName;
     found.lastName = updateUserDto.lastName;
     found.phone = updateUserDto.phone;
     found.birthDate = updateUserDto.birthDate;
+    found.password = await this.hashPassword(
+      updateUserDto.password,
+      found.salt,
+    );
 
     return this.save(found);
   }
@@ -61,5 +67,34 @@ export class UserRepository extends Repository<User> {
     const found = await this.findUser(id);
 
     await this.remove(found);
+  }
+
+  async findUserByUsername(username: string) {
+    const found = await this.findOne({ username });
+
+    if (!found) {
+      throw new UnauthorizedException();
+    }
+
+    return found;
+  }
+
+  async validateUser(username: string, password: string): Promise<string> {
+    const found = await this.findUserByUsername(username);
+
+    if (!found) {
+      throw new UnauthorizedException();
+    }
+
+    const hashedPassword = await this.hashPassword(password, found.salt);
+    if (found.password === hashedPassword) {
+      return found.username;
+    } else {
+      return null;
+    }
+  }
+
+  private async hashPassword(password: string, salt: string): Promise<string> {
+    return bcrypt.hash(password, salt);
   }
 }

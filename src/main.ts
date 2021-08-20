@@ -18,6 +18,7 @@ async function bootstrap() {
     .setDescription('The Personal Financial Manager API description')
     .setVersion('1.0')
     .addTag('personal-financial-manager')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
