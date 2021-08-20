@@ -29,7 +29,9 @@ export class UserRepository extends Repository<User> {
     } catch (error) {
       throw new InternalServerErrorException(`Something wrong in createUser`);
     }
-    return this.save(user);
+
+    const savedUser = await this.save(user);
+    return this.hidePrivateProperties(savedUser);
   }
 
   async findUser(id: number): Promise<User> {
@@ -96,5 +98,11 @@ export class UserRepository extends Repository<User> {
 
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
+  }
+
+  private hidePrivateProperties(user: User): User {
+    delete user.password;
+    delete user.salt;
+    return user;
   }
 }
